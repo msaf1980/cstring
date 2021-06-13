@@ -366,6 +366,72 @@ CTEST(cstring, cstring_printf_ucat) {
     cstring_free(&s);
 }
 
+CTEST(cstring, cstring_trim) {
+    cstring_t s;
+    char *s_trim;
+    c_allocator_default_init(); /* init default allocator */
+
+    ASSERT_EQUAL(0, cstring_init(&s, 128, NULL));
+
+    cstring_cpy(&s, " PtestT P");
+
+    s_trim = cstring_trim(&s, " TP");
+    ASSERT_TRUE_D(s_trim == s.data, "cstring_trim incorrect return");
+    ASSERT_STR_D("test", s.data, "string was not correct trimmed");
+    ASSERT_EQUAL_D(4, s.size, "cstring_trim incorrect set size");
+
+    s_trim = cstring_trim(&s, " TP");
+    ASSERT_TRUE_D(s_trim == s.data, "cstring_trim incorrect return");
+    ASSERT_STR_D("test", s.data, "string was not correct trimmed");
+    ASSERT_EQUAL_D(4, s.size, "cstring_trim incorrect set size");
+
+    cstring_free(&s);
+}
+
+CTEST(cstring, cstring_rtrim) {
+    cstring_t s;
+    char *s_trim;
+    c_allocator_default_init(); /* init default allocator */
+
+    ASSERT_EQUAL(0, cstring_init(&s, 128, NULL));
+
+    cstring_cpy(&s, " PtestT P");
+
+    s_trim = cstring_rtrim(&s, " TP");
+    ASSERT_TRUE_D(s_trim == s.data, "cstring_trim incorrect return");
+    ASSERT_STR_D(" Ptest", s.data, "string was not correct trimmed from right");
+    ASSERT_EQUAL_D(6, s.size, "cstring_trim incorrect set size");
+
+    s_trim = cstring_rtrim(&s, " TP");
+    ASSERT_TRUE_D(s_trim == s.data, "cstring_trim incorrect return");
+    ASSERT_STR_D(" Ptest", s.data, "string was not correct trimmed from right");
+    ASSERT_EQUAL_D(6, s.size, "cstring_trim incorrect set size");
+
+    cstring_free(&s);
+}
+
+CTEST(cstring, cstring_ltrim) {
+    cstring_t s;
+    char *s_trim;
+    c_allocator_default_init(); /* init default allocator */
+
+    ASSERT_EQUAL(0, cstring_init(&s, 128, NULL));
+
+    cstring_cpy(&s, " PtestT P");
+
+    s_trim = cstring_ltrim(&s, " TP");
+    ASSERT_TRUE_D(s_trim == s.data, "cstring_trim incorrect return");
+    ASSERT_STR_D("testT P", s.data, "string was not correct trimmed from left");
+    ASSERT_EQUAL_D(7, s.size, "cstring_trim incorrect set size");
+
+    s_trim = cstring_ltrim(&s, " TP");
+    ASSERT_TRUE_D(s_trim == s.data, "cstring_trim incorrect return");
+    ASSERT_STR_D("testT P", s.data, "string was not correct trimmed from left");
+    ASSERT_EQUAL_D(7, s.size, "cstring_trim incorrect set size");
+
+    cstring_free(&s);
+}
+
 int main(int argc, const char *argv[]) {
     return ctest_main(argc, argv);
 }

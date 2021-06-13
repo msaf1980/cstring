@@ -29,7 +29,8 @@ typedef struct {
  * @a Allocator.
  *    If NULL, default allocator used. Init it with c_allocator_default_init() once at programm start
  * 
- * @return -1 on error  */
+ * @return -1 on error
+ */
 int cstring_init(cstring_t *s, size_t capacity, c_allocator_t *a);
 /* 
  * Attach null-terminated string.
@@ -110,6 +111,13 @@ ssize_t cstring_vnprintf_cat(cstring_t *s, const char *fmt, va_list ap);
  * 
  * If the output was truncated due to capacity overflow, return value is the number of characters needed for buffer */
 ssize_t cstring_nprintf_cat(cstring_t *s, const char *fmt, ...);
+
+/* Trim from left and from right of string chars in set */
+char *cstring_trim(cstring_t *s, const char *cset);
+/* Trim from right of string chars in set */
+char *cstring_rtrim(cstring_t *s, const char *cset);
+/* Trim from left right of string chars in set */
+char *cstring_ltrim(cstring_t *s, const char *cset);
 
 #ifdef __cplusplus
 }

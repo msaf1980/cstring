@@ -327,3 +327,57 @@ ssize_t cstring_nprintf_cat(cstring_t *s, const char *fmt, ...) {
     va_end(ap);
     return n;
 }
+
+char *cstring_trim(cstring_t *s, const char *cset) {
+    char *sp, *ep;
+    size_t len;
+
+    if (s->size == 0 || cset == NULL) return NULL;
+
+    sp = s->data;
+    ep = s->data+s->size-1;
+    while(sp <= ep && strchr(cset, *sp)) sp++;
+    while(ep > sp && strchr(cset, *ep)) ep--;
+    len = (sp > ep) ? 0 : ((ep-sp)+1);
+    if (len != s->size) {
+        if (s->data != sp) memmove(s->data, sp, len);
+        s->data[len] = '\0';
+        s->size = len;
+    }
+    return s->data;
+}
+
+char *cstring_rtrim(cstring_t *s, const char *cset) {
+    char *sp, *ep;
+    size_t len;
+
+    if (s->size == 0 || cset == NULL) return NULL;
+
+    sp = s->data;
+    ep = s->data+s->size-1;
+    while(ep > sp && strchr(cset, *ep)) ep--;
+    len = (sp > ep) ? 0 : ((ep-sp)+1);
+    if (len != s->size) {
+        s->data[len] = '\0';
+        s->size = len;
+    }
+    return s->data;
+}
+
+char *cstring_ltrim(cstring_t *s, const char *cset) {
+    char *sp, *ep;
+    size_t len;
+
+    if (s->size == 0 || cset == NULL) return NULL;
+
+    sp = s->data;
+    ep = s->data+s->size-1;
+    while(sp <= ep && strchr(cset, *sp)) sp++;
+    len = (sp > ep) ? 0 : ((ep-sp)+1);
+    if (len != s->size) {
+        if (s->data != sp) memmove(s->data, sp, len);
+        s->data[len] = '\0';
+        s->size = len;
+    }
+    return s->data;
+}
