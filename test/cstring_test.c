@@ -432,6 +432,46 @@ CTEST(cstring, cstring_ltrim) {
     cstring_free(&s);
 }
 
+CTEST(cstring, cstring_insert) {
+    cstring_t s;
+    c_allocator_default_init(); /* init default allocator */
+
+    ASSERT_EQUAL(0, cstring_init(&s, 0, NULL));
+
+    ASSERT_NULL_D(cstring_insert(&s, 1, "testP", 4), "string insert overflow");
+
+    cstring_insert(&s, 0, "testP", 4);
+    ASSERT_STR_D("test", s.data, "string was not correct inserted");
+    ASSERT_EQUAL_D(4, s.size, "cstring_trim incorrect set size");
+
+    cstring_trunc(&s, 0);
+
+    cstring_insert(&s, 0, "tes", 3);
+    ASSERT_STR_D("tes", s.data, "string was not correct inserted");
+    ASSERT_EQUAL_D(3, s.size, "cstring_trim incorrect set size");
+
+    cstring_insert(&s, 3, "t", 1);
+    ASSERT_STR_D("test", s.data, "string was not correct inserted");
+    ASSERT_EQUAL_D(4, s.size, "cstring_trim incorrect set size");
+
+    cstring_insert(&s, 2, "IN", 2);
+    ASSERT_STR_D("teINst", s.data, "string was not correct inserted");
+    ASSERT_EQUAL_D(6, s.size, "cstring_trim incorrect set size");
+
+    cstring_insert(&s, 6, "END", 3);
+    ASSERT_STR_D("teINstEND", s.data, "string was not correct inserted");
+    ASSERT_EQUAL_D(9, s.size, "cstring_trim incorrect set size");
+
+    ASSERT_NULL_D(cstring_insert(&s, 10, "testP", 4), "string insert overflow");
+
+    /* insert with reallocate */
+    cstring_insert(&s, 6, "QWERTYUIOPASDFGHKLZXCVBNMQWERTYUIOPASDFGHKLZXCVBNMQWERTYUIOPASDFGHKLZXCVBNM", 75);
+    ASSERT_STR_D("teINstQWERTYUIOPASDFGHKLZXCVBNMQWERTYUIOPASDFGHKLZXCVBNMQWERTYUIOPASDFGHKLZXCVBNMEND", s.data, "string was not correct inserted");
+    ASSERT_EQUAL_D(84, s.size, "cstring_trim incorrect set size");
+
+    cstring_free(&s);
+}
+
 int main(int argc, const char *argv[]) {
     return ctest_main(argc, argv);
 }

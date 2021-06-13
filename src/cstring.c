@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define CAPACITY_WITH_FACTOR(n) ( (n > 64) ? ( (n * 15 / 640 + 1) * 64 ) : 64 ) /* size with realloc factor */
+#define CAPACITY_WITH_FACTOR(n) ( (n * 15 / 640 + 1) * 64 ) /* size with realloc factor */
 
 int cstring_init(cstring_t *s, size_t capacity, c_allocator_t *a) {
     s->data = NULL;
@@ -40,16 +40,18 @@ void cstring_attach(cstring_t *s, char *buf, size_t size, size_t capacity, c_all
 }
 
 int cstring_reserve(cstring_t *s, size_t capacity) {
-    if (s->allocator == NULL || s->allocator->alloc_func == NULL || s->allocator->free_func == NULL)
-        return -1;    
+    if (s->allocator == NULL || s->allocator->alloc_func == NULL || s->allocator->free_func == NULL) {
+        errno = ENOSYS;
+        return -1;
+    }
     if (capacity == 0) {
         cstring_free(s);
-    } else {
+    } else if (s->capacity != capacity - 1) {
         char *p;
-        p = (char *) s->allocator->alloc_func(sizeof(char) * (capacity + 1));
+        p = (char *) s->allocator->alloc_func(sizeof(char) * capacity);
         if (p) {
             if (s->size > 0) {
-                if (s->size >= capacity) {
+                if (s->size >= capacity - 1) {
                     s->size = capacity;
                 }
                 memcpy(p, s->data, sizeof(char) * s->size);
@@ -379,5 +381,42 @@ char *cstring_ltrim(cstring_t *s, const char *cset) {
         s->data[len] = '\0';
         s->size = len;
     }
+    return s->data;
+}
+
+char *cstring_insert(cstring_t *s, size_t pos, const char *si, const size_t sze) {
+    if (si && sze) {
+        size_t new_size;
+        if (s->size < pos) {
+            errno = EOVERFLOW;
+            return NULL;
+        }
+        new_size = s->size + sze;
+        if (s->capacity == 0 || s->capacity < new_size) {
+            char *p;
+            size_t asize;
+            if (s->allocator == NULL || s->allocator->alloc_func == NULL || s->allocator->free_func == NULL) {
+                errno = ENOSYS;
+                return NULL;
+            }
+            asize = CAPACITY_WITH_FACTOR(new_size);
+            p = (char *) s->allocator->alloc_func(sizeof(char) * asize);
+            if (p == NULL) return NULL;
+            memcpy(p, s->data, pos);
+            memcpy(p + pos, si, sze);
+            if (s->size) {
+                memcpy(p + pos + sze, s->data + pos, s->size - pos + 1);
+            } else {
+                p[pos + sze] = '\0';
+            }
+            s->allocator->free_func(s->data);
+            s->data = p;
+            s->capacity = asize - 1;
+        } else {
+            memmove(s->data + pos + sze, s->data + pos, s->size - pos + 1);
+            memcpy(s->data + pos, si, sze);
+        }
+    }
+    s->size += sze;
     return s->data;
 }

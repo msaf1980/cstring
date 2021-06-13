@@ -27,7 +27,7 @@ typedef struct {
  * @capacity Capacity (without reserverd termination symbol). Really allocated (capacity + 1) for terminated symbol.
  * 
  * @a Allocator.
- *    If NULL, default allocator used. Init it with c_allocator_default_init() once at programm start
+ *    If NULL, default allocator used (malloc/free). Init it with c_allocator_default_init() once at programm start
  * 
  * @return -1 on error
  */
@@ -105,11 +105,13 @@ ssize_t cstring_vprintf_cat(cstring_t *s, const char *fmt, va_list ap);
 ssize_t cstring_printf_cat(cstring_t *s, const char *fmt, ...);
 /* Append string (vsnprintf-like formated) without reallocate. */
 ssize_t cstring_vnprintf_cat(cstring_t *s, const char *fmt, va_list ap);
-/* Append string (snprintf-like formated) without reallocate.
+/* 
+ * Append string (snprintf-like formated) without reallocate.
  * 
  * @return On error - negative value. 
  * 
- * If the output was truncated due to capacity overflow, return value is the number of characters needed for buffer */
+ * If the output was truncated due to capacity overflow, return value is the number of characters needed for buffer
+ */
 ssize_t cstring_nprintf_cat(cstring_t *s, const char *fmt, ...);
 
 /* Trim from left and from right of string chars in set */
@@ -118,6 +120,8 @@ char *cstring_trim(cstring_t *s, const char *cset);
 char *cstring_rtrim(cstring_t *s, const char *cset);
 /* Trim from left right of string chars in set */
 char *cstring_ltrim(cstring_t *s, const char *cset);
+/* Insert (sze) symbols to string position from char buffer */
+char *cstring_insert(cstring_t *s, size_t pos, const char *si, const size_t sze);
 
 #ifdef __cplusplus
 }
