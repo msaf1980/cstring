@@ -472,6 +472,38 @@ CTEST(cstring, cstring_insert) {
     cstring_free(&s);
 }
 
+CTEST(cstring, cstring_upper) {
+    char *p;
+    cstring_t s;
+    c_allocator_default_init(); /* init default allocator */
+
+    ASSERT_EQUAL(0, cstring_init(&s, 0, NULL));
+
+    cstring_cpy(&s, "teSt");
+
+    p = cstring_upper(&s);
+    ASSERT_STR_D("TEST", s.data, "string was not correct upped");
+    ASSERT_TRUE_D(p == s.data, "cstring_upper incorrect return");
+
+    cstring_free(&s);
+}
+
+CTEST(cstring, cstring_lower) {
+    char *p;
+    cstring_t s;
+    c_allocator_default_init(); /* init default allocator */
+
+    ASSERT_EQUAL(0, cstring_init(&s, 0, NULL));
+
+    cstring_cpy(&s, "teSt");
+
+    p = cstring_lower(&s);
+    ASSERT_STR_D("test", s.data, "string was not correct lowered");
+    ASSERT_TRUE_D(p == s.data, "cstring_lower incorrect return");
+
+    cstring_free(&s);
+}
+
 int main(int argc, const char *argv[]) {
     return ctest_main(argc, argv);
 }

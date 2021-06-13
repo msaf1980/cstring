@@ -420,3 +420,23 @@ char *cstring_insert(cstring_t *s, size_t pos, const char *si, const size_t sze)
     s->size += sze;
     return s->data;
 }
+
+char *cstring_upper(cstring_t *s) {
+    size_t i;
+    for (i = 0; i < s->size; i++) s->data[i] = toupper(s->data[i]);
+}
+
+char *cstring_upper_l(cstring_t *s, locale_t locale) {
+    size_t i;
+    for (i = 0; i < s->size; i++) s->data[i] = toupper_l(s->data[i], locale);
+}
+
+char *cstring_lower(cstring_t *s) {
+    size_t i;
+    for (i = 0; i < s->size; i++) s->data[i] = tolower(s->data[i]);
+}
+
+char *cstring_lower_l(cstring_t *s, locale_t locale) {
+    size_t i;
+    for (i = 0; i < s->size; i++) s->data[i] = tolower_l(s->data[i], locale);
+}

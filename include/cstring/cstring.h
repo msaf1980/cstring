@@ -3,6 +3,7 @@
 
 #include <cstring/allocator.h>
 
+#include <ctype.h>
 #include <stdarg.h>
 #include <sys/types.h>
 
@@ -80,6 +81,7 @@ char *cstring_ulncpy(cstring_t *s, const char *src, size_t n);
 /* Append to string with reallocate */
 char *cstring_cat(cstring_t *s, const char *src);
 
+
  /* Append n symbols from string with reallocate (if source string is smaller, all symbols copied) */
  char *cstring_ncat(cstring_t *s, const char *src, size_t n);
 /* Append n symbols from string without bound checking and reallocate (if source string is smaller, all symbols copied) (DANGEROUS) */
@@ -99,6 +101,7 @@ char *cstring_ll_ucat(cstring_t *s, long long v);
 /* Append unsigned long long number representation with reallocate */
 char *cstring_ll_cat(cstring_t *s, long long v);
 
+
 /* Append string (vsprintf-like formated) with reallocate, on error return negative value */
 ssize_t cstring_vprintf_cat(cstring_t *s, const char *fmt, va_list ap);
 /* Append string (sprintf-like formated) with reallocate, on error return negative value */
@@ -114,14 +117,27 @@ ssize_t cstring_vnprintf_cat(cstring_t *s, const char *fmt, va_list ap);
  */
 ssize_t cstring_nprintf_cat(cstring_t *s, const char *fmt, ...);
 
+
 /* Trim from left and from right of string chars in set */
 char *cstring_trim(cstring_t *s, const char *cset);
 /* Trim from right of string chars in set */
 char *cstring_rtrim(cstring_t *s, const char *cset);
 /* Trim from left right of string chars in set */
 char *cstring_ltrim(cstring_t *s, const char *cset);
+
+
 /* Insert (sze) symbols to string position from char buffer */
 char *cstring_insert(cstring_t *s, size_t pos, const char *si, const size_t sze);
+
+
+/* Apply toupper() to every character of the sds string 's'. */
+char *cstring_upper(cstring_t *s);
+/* Apply toupper_l() to every character of the sds string 's'. */
+char *cstring_upper_l(cstring_t *s, locale_t locale);
+/* Apply tolower() to every character of the sds string 's'. */
+char *cstring_lower(cstring_t *s);
+/* Apply tolower_l() to every character of the sds string 's'. */
+char *cstring_lower_l(cstring_t *s, locale_t locale);
 
 #ifdef __cplusplus
 }
